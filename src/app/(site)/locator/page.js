@@ -1,4 +1,4 @@
-import LazyStationFinder from "@/components/locator/LazyStationFinder";
+import StationFinder from "@/components/locator/StationFinder";
 
 export default function LocatorPage() {
   return (
@@ -11,7 +11,7 @@ export default function LocatorPage() {
             Search for active EVRE charging hubs and premium lounges in your area.
           </p>
         </div>
-        <LazyStationFinder />
+        <StationFinder />
       </div>
     </section>
   );

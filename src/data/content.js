@@ -1,17 +1,70 @@
-export const MOCK_STATIONS = {
-  "90001": [
-    { name: "Downtown Express Hub - L1", address: "555 S Flower St, Los Angeles", ccs: 4, nacs: 2, status: "Available", speed: "350kW", lat: 34.0522, lon: -118.2437 },
-    { name: "EVRE Lounge Westside", address: "10250 Santa Monica Blvd, Los Angeles", ccs: 2, nacs: 4, status: "Busy (1 Free)", speed: "150kW", lat: 34.0594, lon: -118.4208 }
-  ],
-  seattle: [
-    { name: "Capitol Hill Central", address: "1201 E Pine St, Seattle", ccs: 3, nacs: 3, status: "Available", speed: "350kW", lat: 47.6140, lon: -122.3200 },
-    { name: "Seattle Waterfront Hub", address: "1001 Alaskan Way, Seattle", ccs: 0, nacs: 2, status: "Full", speed: "150kW", lat: 47.6050, lon: -122.3390 }
-  ],
-  default: [
-    { name: "Silicon Valley Gateway", address: "3000 Sand Hill Rd, Menlo Park", ccs: 6, nacs: 4, status: "Available", speed: "350kW", lat: 37.4275, lon: -122.1697 },
-    { name: "Soho Lifestyle Hub", address: "529 Broadway, New York", ccs: 2, nacs: 2, status: "Busy (2 Free)", speed: "150kW", lat: 40.7233, lon: -74.0008 }
-  ]
+export const STATION_REGIONS = {
+  "los-angeles": {
+    label: "Los Angeles, CA",
+    center: { lat: 34.0558, lon: -118.332 },
+    zoom: 13,
+    stations: [
+      { name: "Downtown Express Hub - L1", address: "555 S Flower St, Los Angeles", ccs: 4, nacs: 2, status: "Available", speed: "350kW", lat: 34.0522, lon: -118.2437 },
+      { name: "EVRE Lounge Westside", address: "10250 Santa Monica Blvd, Los Angeles", ccs: 2, nacs: 4, status: "Busy (1 Free)", speed: "150kW", lat: 34.0594, lon: -118.4208 },
+    ],
+  },
+  seattle: {
+    label: "Seattle, WA",
+    center: { lat: 47.6095, lon: -122.3295 },
+    zoom: 13,
+    stations: [
+      { name: "Capitol Hill Central", address: "1201 E Pine St, Seattle", ccs: 3, nacs: 3, status: "Available", speed: "350kW", lat: 47.614, lon: -122.32 },
+      { name: "Seattle Waterfront Hub", address: "1001 Alaskan Way, Seattle", ccs: 0, nacs: 2, status: "Full", speed: "150kW", lat: 47.605, lon: -122.339 },
+    ],
+  },
+  "bay-area": {
+    label: "San Francisco Bay Area, CA",
+    center: { lat: 37.4275, lon: -122.1697 },
+    zoom: 13,
+    stations: [
+      { name: "Silicon Valley Gateway", address: "3000 Sand Hill Rd, Menlo Park", ccs: 6, nacs: 4, status: "Available", speed: "350kW", lat: 37.4275, lon: -122.1697 },
+      { name: "SF Howard St Hub", address: "400 Howard St, San Francisco", ccs: 3, nacs: 3, status: "Available", speed: "350kW", lat: 37.7885, lon: -122.3958 },
+    ],
+  },
+  "new-york": {
+    label: "New York, NY",
+    center: { lat: 40.7233, lon: -74.0008 },
+    zoom: 13,
+    stations: [
+      { name: "Soho Lifestyle Hub", address: "529 Broadway, New York", ccs: 2, nacs: 2, status: "Busy (2 Free)", speed: "150kW", lat: 40.7233, lon: -74.0008 },
+      { name: "Brooklyn Navy Yard", address: "63 Flushing Ave, Brooklyn", ccs: 4, nacs: 2, status: "Available", speed: "350kW", lat: 40.6994, lon: -73.9712 },
+    ],
+  },
 };
+
+/** @deprecated use STATION_REGIONS */
+export const MOCK_STATIONS = {
+  "90001": STATION_REGIONS["los-angeles"].stations,
+  seattle: STATION_REGIONS.seattle.stations,
+  default: STATION_REGIONS["bay-area"].stations,
+};
+
+export const SEARCH_HINTS = ["560061", "London", "New York", "Tokyo", "Dubai", "Sydney"];
+
+export function searchStationRegion(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) return { regionKey: "bay-area", ...STATION_REGIONS["bay-area"] };
+
+  const rules = [
+    { regionKey: "los-angeles", patterns: [/90001/, /902\d{2}/, /los\s*angeles/, /\bla\b/, /santa monica/, /california/] },
+    { regionKey: "seattle", patterns: [/seattle/, /981\d{2}/, /capitol hill/, /washington/] },
+    { regionKey: "new-york", patterns: [/new\s*york/, /\bnyc\b/, /soho/, /brooklyn/, /manhattan/, /100\d{2}/] },
+    { regionKey: "bay-area", patterns: [/san\s*francisco/, /\bsf\b/, /menlo/, /palo alto/, /sand hill/, /94025/, /941\d{2}/, /bay area/, /silicon valley/] },
+  ];
+
+  for (const rule of rules) {
+    if (rule.patterns.some((p) => p.test(q))) {
+      return { regionKey: rule.regionKey, ...STATION_REGIONS[rule.regionKey] };
+    }
+  }
+
+  return null;
+}
 
 export const TESTIMONIALS = [
   {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles, Zap, Coffee, Building2, ShieldCheck, Calculator, Star, Mail } from "lucide-react";
-import LazyStationFinder from "@/components/locator/LazyStationFinder";
+import StationFinder from "@/components/locator/StationFinder";
 
 const FEATURE_LINKS = [
   { href: "/about", label: "About", icon: Zap, color: "text-[#34D399]" },
@@ -74,7 +74,7 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-5">
-            <LazyStationFinder />
+            <StationFinder />
           </div>
         </div>
       </section>
